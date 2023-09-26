@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 var cors = require("cors");
 
+require("dotenv").config();
+
 // parse application/x-www-form-urlencoded
 
 const express = require("express");
@@ -10,6 +12,9 @@ const Course = require("./models");
 
 //Initialize express app
 const app = express();
+
+const PORT = process.env.PORT || 3000;
+mongoose.set("strictQuery", false);
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -19,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // });
 
 // Connecting to DB
+// console.log(process.env);
 
 const connectDB = async () => {
   try {
@@ -111,8 +117,10 @@ app.delete("/course/delete/:id", async (req, res) => {
   }
 });
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Lis on port ${PORT}`);
-  });
-});
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Lis on port ${PORT}`);
+    });
+  })
+  .catch(() => console.log("Err"));
