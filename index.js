@@ -13,23 +13,35 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-//Initialize the sever
-app.listen(3000, () => {
-  console.log("sever listening on port:3000");
-});
+// //Initialize the sever
+// app.listen(3000, () => {
+//   console.log("sever listening on port:3000");
+// });
 
 // Connecting to DB
-mongoose
-  .connect("mongodb://localhost:27017/Courses", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("connected to db");
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(conn.connection.host);
+  } catch (error) {
+    process.exit(1);
+  }
+};
+// mongoose
+//   .connect("mongodb://localhost:27017/Courses", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => {
+//     console.log("connected to db");
+//   })
+//   .catch((error) => {
+//     console.log(error);
+//   });
 
 //retrieve all
 
@@ -97,4 +109,10 @@ app.delete("/course/delete/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
+});
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Lis on port ${PORT}`);
+  });
 });
